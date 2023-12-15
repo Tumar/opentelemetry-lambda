@@ -20,10 +20,11 @@ module "hello-lambda-function" {
 
   environment_variables = {
     AWS_LAMBDA_EXEC_WRAPPER     = "/opt/otel-handler"
-    OTEL_TRACES_EXPORTER        = "logging"
-    OTEL_METRICS_EXPORTER       = "logging"
+    OTEL_TRACES_EXPORTER        = "otlp"
+    OTEL_METRICS_EXPORTER       = "otlp"
     OTEL_LOG_LEVEL              = "DEBUG"
-    OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:4318/"
+    OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:4317"
+    OPENTELEMETRY_COLLECTOR_CONFIG_FILE = "/var/task/collector.yml"
   }
 
   tracing_mode = var.tracing_mode

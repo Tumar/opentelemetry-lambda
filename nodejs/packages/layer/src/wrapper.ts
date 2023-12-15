@@ -1,3 +1,4 @@
+import { metrics } from '@opentelemetry/api';
 import { NodeTracerConfig, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import {
   BatchSpanProcessor,
@@ -22,7 +23,8 @@ import {
 import { getEnv } from '@opentelemetry/core';
 import { AwsLambdaInstrumentationConfig } from '@opentelemetry/instrumentation-aws-lambda';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
-import { MeterProvider, MeterProviderOptions } from '@opentelemetry/sdk-metrics';
+import { ConsoleMetricExporter, MeterProvider, MeterProviderOptions, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 
 function defaultConfigureInstrumentations() {
   // Use require statements for instrumentation to avoid having to have transitive dependencies on all the typescript
@@ -128,10 +130,28 @@ async function initializeProvider() {
     meterConfig = configureMeter(meterConfig);
   }
 
+  const consoleMetricReader = new PeriodicExportingMetricReader({
+    exporter: new ConsoleMetricExporter(),
+
+    // Default is 60000ms (60 seconds). Set to 3 seconds for demonstrative purposes only.
+    exportIntervalMillis: 3000,
+  });
+  const metricReader = new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter({
+      url: 'http://localhost:4317',
+    }),
+
+    // Default is 60000ms (60 seconds). Set to 3 seconds for demonstrative purposes only.
+    exportIntervalMillis: 3000,
+  });
   const meterProvider = new MeterProvider(meterConfig);
   if (typeof configureMeterProvider === 'function') {
     configureMeterProvider(meterProvider)
   }
+
+  meterProvider.addMetricReader(consoleMetricReader);
+  meterProvider.addMetricReader(metricReader);
+  metrics.setGlobalMeterProvider(meterProvider);
 
   // Re-register instrumentation with initialized provider. Patched code will see the update.
   registerInstrumentations({

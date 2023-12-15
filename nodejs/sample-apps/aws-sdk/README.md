@@ -7,6 +7,10 @@ layers are built.
 
 In [collector](../../../collector), run `make package`.
 In [nodejs](../../), run `npm install`.
+In [packages/layer](../../packages/layer/) run `aws --debug lambda publish-layer-version --layer-name=tk-opentelemetry-sdk --zip-file fileb://build/layer.zip --compatible-runtimes nodejs16.x nodejs18.x --query 'LayerVersionArn' --output text`
+
+Specify api-key for newrelic otlp exporterin collector.yml file
+Specify layer arns in variables.tf file 
 
 Then, run `terraform init` and `terraform apply`. The lambda function will be initialized and the URL for an API Gateway invoking the Lambda
 will be displayed at the end. Send a request to the URL in a browser or using curl to execute the function. Then,

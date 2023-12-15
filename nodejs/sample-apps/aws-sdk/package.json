@@ -13,7 +13,7 @@
     "precompile": "tsc --version",
     "prepare": "npm run compile",
     "compile": "tsc -p .",
-    "postcompile": "copyfiles 'package*.json' build/src/ && npm install --production --ignore-scripts --prefix build/src/ && cd build/src && bestzip ../function.zip *"
+    "postcompile": "copyfiles 'package*.json' 'collector.yml' build/src/ && npm install --force --production --ignore-scripts --prefix build/src/ && cd build/src && bestzip ../function.zip *"
   },
   "keywords": [
     "opentelemetry",
@@ -47,6 +47,7 @@
     "typescript": "5.3.3"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.7.0",
     "aws-sdk": "2.1486.0"
   }
 }
