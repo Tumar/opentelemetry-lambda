@@ -7,7 +7,7 @@ layers are built.
 
 In [collector](../../../collector), run `make package`.
 In [nodejs](../../), run `npm install`.
-In [packages/layer](../../packages/layer/) run `aws --debug lambda publish-layer-version --layer-name=tk-opentelemetry-sdk --zip-file fileb://build/layer.zip --compatible-runtimes nodejs16.x nodejs18.x --query 'LayerVersionArn' --output text`
+In [packages/layer](../../packages/layer/) compile a project before publishing and run `aws --debug lambda publish-layer-version --layer-name=tk-opentelemetry-sdk --zip-file fileb://build/layer.zip --compatible-runtimes nodejs16.x nodejs18.x --query 'LayerVersionArn' --output text`
 
 Specify api-key for newrelic otlp exporterin collector.yml file
 Specify layer arns in variables.tf file 
